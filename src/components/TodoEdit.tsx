@@ -185,7 +185,7 @@ function UnderlineField({
 }) {
   const hasValue = Boolean(value);
   const isEditable = Boolean(onClick);
-  const textColor = hasValue ? '#1a1a1a' : '#d1d6db';
+  const textColor = hasValue ? 'rgba(0,12,30,0.80)' : 'rgba(0,12,30,0.30)';
 
   return (
     <div>
@@ -194,15 +194,15 @@ function UnderlineField({
         disabled={!onClick}
         style={{ width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: 0, cursor: isEditable ? 'pointer' : 'default' }}
       >
-        <div style={{ borderBottom: '1.5px solid #1a1a1a', paddingBottom: 10 }}>
-          <p style={{ fontSize: 12, color: '#8b95a1', margin: '0 0 6px', fontWeight: 500 }}>{label}</p>
+        <div style={{ borderBottom: '1.5px solid rgba(0,12,30,0.15)', paddingBottom: 10 }}>
+          <p style={{ fontSize: 13, color: 'rgba(0,12,30,0.80)', margin: '0 0 6px', fontWeight: 500 }}>{label}</p>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <span style={{ fontSize: 16, fontWeight: hasValue ? 500 : 400, color: textColor }}>
+            <span style={{ fontSize: 22, fontWeight: 600, color: textColor }}>
               {value || placeholder}
             </span>
             {showArrow && isEditable && (
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path d="M4 6L8 10L12 6" stroke="#b0b8c1" strokeWidth="1.5" strokeLinecap="round" />
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M7.5 5L12.5 10L7.5 15" stroke="rgba(0,12,30,0.30)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             )}
           </div>
@@ -426,29 +426,20 @@ export default function TodoEdit({ todo, onUpdate, onDelete, onBack }: Props) {
             <path d="M8.5 1.5L1.5 8.5L8.5 15.5" stroke="#1a1a1a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </button>
-        <p style={{ fontSize: 13, fontWeight: 400, color: 'rgba(3,18,40,1.0)', margin: '0 0 2px', lineHeight: 1.5 }}>알람 맞추듯 쉽게</p>
-        <h1 style={{ fontSize: 28, fontWeight: 700, color: 'rgba(25,31,40,1.0)', margin: 0, lineHeight: 1.2 }}>할 일 수정하기</h1>
+        <p style={{ fontSize: 13, fontWeight: 400, color: 'rgba(3,18,40,0.70)', margin: '0 0 2px', lineHeight: 1.5 }}>알람 맞추듯 쉽게</p>
+        <h1 style={{ fontSize: 28, fontWeight: 700, color: 'rgba(25,31,40,1.0)', margin: '0 0 4px', lineHeight: 1.2 }}>할 일 수정하기</h1>
+        <p style={{ fontSize: 17, fontWeight: 400, color: 'rgba(3,18,40,0.70)', margin: 0, lineHeight: 1.5 }}>멋지게 해낼 수 있도록 도와드릴게요!</p>
       </div>
 
       {/* ── Body ── */}
       <div style={{ flex: 1, padding: '8px 20px 0', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 28 }}>
         {/* 시간 */}
-        <div>
-          <UnderlineField
-            label="시간"
-            value={timeDisplay}
-            placeholder="선택 안 함"
-            onClick={openTimePicker}
-          />
-          {hasTime && (
-            <button
-              onClick={() => setHasTime(false)}
-              style={{ marginTop: 6, background: 'none', border: 'none', padding: 0, cursor: 'pointer', fontSize: 12, color: '#b0b8c1', textDecoration: 'underline' }}
-            >
-              시간 선택 취소
-            </button>
-          )}
-        </div>
+        <UnderlineField
+          label="시간"
+          value={timeDisplay}
+          placeholder="선택 안 함"
+          onClick={openTimePicker}
+        />
 
         {/* 날짜 (매일이면 숨김) */}
         {recurrence !== '매일' && (
@@ -470,15 +461,18 @@ export default function TodoEdit({ todo, onUpdate, onDelete, onBack }: Props) {
 
         {/* 할 일 제목 */}
         <div>
-          <div style={{ borderBottom: '1.5px solid #1a1a1a', paddingBottom: 10 }}>
-            <p style={{ fontSize: 12, color: '#8b95a1', margin: '0 0 6px', fontWeight: 500 }}>어떤 일인가요?</p>
+          <div style={{ borderBottom: '1.5px solid rgba(0,12,30,0.15)', paddingBottom: 10 }}>
+            <p style={{ fontSize: 13, color: 'rgba(0,12,30,0.80)', margin: '0 0 6px', fontWeight: 500 }}>어떤 일인가요?</p>
             <input
               value={title}
               onChange={e => setTitle(e.target.value)}
               maxLength={50}
-              style={{ width: '100%', border: 'none', outline: 'none', fontSize: 16, fontWeight: 500, color: '#1a1a1a', background: 'transparent', padding: 0 }}
+              style={{ width: '100%', border: 'none', outline: 'none', fontSize: 22, fontWeight: 600, color: 'rgba(0,12,30,0.80)', background: 'transparent', padding: 0 }}
             />
           </div>
+          <p style={{ fontSize: 13, fontWeight: 400, color: 'rgba(0,19,43,0.58)', margin: '8px 0 0' }}>
+            비타민 먹기, 양치하기 등 하고 싶은 일을 가볍게 적어요.
+          </p>
         </div>
       </div>
 
@@ -487,9 +481,9 @@ export default function TodoEdit({ todo, onUpdate, onDelete, onBack }: Props) {
         <button
           onClick={() => setShowDeleteConfirm(true)}
           style={{
-            flex: 1, height: 56, borderRadius: 14, border: '1.5px solid #E5E8EB',
-            background: '#fff', color: '#8b95a1',
-            fontSize: 16, fontWeight: 600, cursor: 'pointer',
+            flex: 1, height: 56, borderRadius: 14, border: 'none',
+            background: 'rgba(49,130,246,0.16)', color: 'rgba(34,114,235,1.0)',
+            fontSize: 17, fontWeight: 600, cursor: 'pointer',
           }}
         >삭제하기</button>
         <button
@@ -497,9 +491,9 @@ export default function TodoEdit({ todo, onUpdate, onDelete, onBack }: Props) {
           disabled={!canUpdate}
           style={{
             flex: 1, height: 56, borderRadius: 14, border: 'none',
-            background: canUpdate ? '#3182F6' : '#E5E8EB',
+            background: canUpdate ? 'rgba(49,130,246,1.0)' : '#E5E8EB',
             color: canUpdate ? '#fff' : '#b0b8c1',
-            fontSize: 16, fontWeight: 700,
+            fontSize: 17, fontWeight: 600,
             cursor: canUpdate ? 'pointer' : 'default',
           }}
         >수정완료</button>
