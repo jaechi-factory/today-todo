@@ -6,7 +6,7 @@ import { isTodoOnDate, isCompletedOnDate } from '../hooks/useTodos';
 interface Props {
   todos: Todo[];
   onToggle: (id: string, date: string) => void;
-  onDelete: (id: string) => void;
+  onEdit: (todo: Todo) => void;
   onCreateTap: () => void;
 }
 
@@ -98,7 +98,7 @@ function CalendarSheet({ selectedDate, onConfirm, onClose }: {
 
 
 // ─── 메인 ────────────────────────────────────────────────────────
-export default function TodoHome({ todos, onToggle, onDelete, onCreateTap }: Props) {
+export default function TodoHome({ todos, onToggle, onEdit, onCreateTap }: Props) {
   const todayStr = toDateString(new Date());
   const [selectedDate, setSelectedDate] = useState(todayStr);
   const [showCalendar, setShowCalendar] = useState(false);
@@ -158,69 +158,114 @@ export default function TodoHome({ todos, onToggle, onDelete, onCreateTap }: Pro
         />
       )}
 
-      {/* 헤더 영역 - 보더 없음 */}
+      {/* 헤더 영역 */}
       <div style={{ background: '#fff', flexShrink: 0 }}>
-        {/* 타이틀 */}
-        <div style={{ padding: '56px 24px 0' }}>
-          <h1 style={{ fontSize: 28, fontWeight: 700, color: '#191f28', margin: 0 }}>오늘 할 일</h1>
+        {/* Top 컴포넌트 - TDS 스펙: padding 24px all, HORIZONTAL layout, itemSpacing 16 */}
+        <div style={{ padding: '56px 24px 24px', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+          <div>
+            {/* Subtitle Top: fs=13 fw=400 color=rgba(3,18,40,1.0) */}
+            <p style={{ fontSize: 13, fontWeight: 400, color: 'rgba(3,18,40,1.0)', margin: '0 0 2px', lineHeight: 1.5 }}>알람 맞추듯 쉽게</p>
+            {/* Title: fs=28 fw=700 color=rgba(25,31,40,1.0) */}
+            <h1 style={{ fontSize: 28, fontWeight: 700, color: 'rgba(25,31,40,1.0)', margin: 0, lineHeight: 1.2 }}>오늘 할 일</h1>
+          </div>
+          {/* Right Item: 알림받기 button - 52x32 bg=#3182F6 fs=13 fw=600 */}
+          <button style={{
+            width: 60, height: 32, borderRadius: 8, border: 'none',
+            background: '#3182F6', color: '#fff',
+            fontSize: 13, fontWeight: 600, cursor: 'pointer',
+            flexShrink: 0, marginTop: 6, whiteSpace: 'nowrap',
+          }}>알림받기</button>
         </div>
 
-        {/* 날짜 행 (Listheader V3) */}
+        {/* Listheader V3 - paddingTop=16 paddingBottom=4 paddingLeft=24 paddingRight=24 */}
         <div style={{ padding: '16px 24px 4px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <button
             onClick={() => setShowCalendar(true)}
             style={{ display: 'flex', alignItems: 'center', gap: 4, background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
           >
-            <span style={{ fontSize: 17, fontWeight: 700, color: 'rgba(0,12,30,0.80)' }}>{formatDateLabel(selectedDate)}</span>
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M4 6L8 10L12 6" stroke="rgba(0,12,30,0.80)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            {/* Title Option: fs=17 fw=700 color=rgba(0,12,30,1.0) - full opacity */}
+            <span style={{ fontSize: 17, fontWeight: 700, color: 'rgba(0,12,30,1.0)' }}>{formatDateLabel(selectedDate)}</span>
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+              <path d="M3 4.5L6 7.5L9 4.5" stroke="rgba(0,12,30,1.0)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </button>
-          <span style={{ fontSize: 13, fontWeight: 400, color: 'rgba(3,18,40,0.70)' }}>총 {total}개</span>
+          {/* Tailing Acc: fs=13 fw=400 color=rgba(3,18,40,1.0) */}
+          <span style={{ fontSize: 13, fontWeight: 400, color: 'rgba(3,18,40,1.0)' }}>총 {total}개</span>
         </div>
 
-        {/* 스텝 프로그레스 */}
+        {/* Progress Stepper Compact - TDS 스펙: paddingTop=16 paddingBottom=8 itemSpacing=10 */}
         {total > 0 && (
-          <div style={{ padding: '8px 24px 12px', position: 'relative' }}>
-            {/* 트랙 */}
-            <div style={{ position: 'relative', height: 8, borderRadius: 4, background: '#e5e8eb' }}>
-              {/* 채워진 바 */}
+          <div style={{ padding: '16px 24px 8px' }}>
+            {/* 트랙 + 스텝 도트 영역 (34px height = 8px track + dots overlap) */}
+            <div style={{ position: 'relative', height: 34 }}>
+              {/* 트랙: 8px height bg=#F2F4F6 */}
               <div style={{
-                position: 'absolute', left: 0, top: 0, height: '100%',
-                width: `${(completedTodos.length / total) * 100}%`,
-                background: '#3182f6', borderRadius: 4,
-                transition: 'width 0.3s ease',
-              }} />
-              {/* 스텝 점 */}
+                position: 'absolute', left: 0, right: 0, top: '50%',
+                transform: 'translateY(-50%)',
+                height: 8, borderRadius: 4, background: '#F2F4F6',
+              }}>
+                {/* 완료된 구간 파란 채움 */}
+                <div style={{
+                  position: 'absolute', left: 0, top: 0, height: '100%',
+                  width: completedTodos.length > 0
+                    ? `${((completedTodos.length) / total) * 100}%`
+                    : '0%',
+                  background: '#3182f6', borderRadius: 4,
+                  transition: 'width 0.3s ease',
+                }} />
+              </div>
+              {/* 스텝 도트 - TDS: 16px outer ring + inner dot (5px white for done/pending, 8px blue for active) */}
               {Array.from({ length: total }, (_, i) => {
                 const pos = ((i + 1) / total) * 100;
                 const isDone = i < completedTodos.length;
+                const isActive = i === completedTodos.length;
                 return (
                   <div key={i} style={{
                     position: 'absolute',
                     left: `${pos}%`,
                     top: '50%',
                     transform: 'translate(-50%, -50%)',
-                    width: 8, height: 8, borderRadius: '50%',
-                    background: isDone ? '#3182f6' : '#e5e8eb',
-                    border: isDone ? 'none' : '1.5px solid #c5ccd5',
-                    boxSizing: 'border-box',
-                  }} />
+                    width: 16, height: 16,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}>
+                    {isActive ? (
+                      /* 현재 스텝: 16px outer (rgba(26,122,249)) + 8px solid blue inner */
+                      <div style={{
+                        width: 16, height: 16, borderRadius: '50%',
+                        background: 'rgba(26,122,249,0.25)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      }}>
+                        <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#3182f6' }} />
+                      </div>
+                    ) : isDone ? (
+                      /* 완료 스텝: 8px solid blue */
+                      <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#3182f6' }} />
+                    ) : (
+                      /* 미완료 스텝: 8px gray ring */
+                      <div style={{
+                        width: 8, height: 8, borderRadius: '50%',
+                        background: '#F2F4F6', border: '1.5px solid #D1D6DB',
+                        boxSizing: 'border-box',
+                      }} />
+                    )}
+                  </div>
                 );
               })}
             </div>
-            {/* 숫자 레이블 */}
-            <div style={{ position: 'relative', marginTop: 6, height: 16 }}>
+            {/* 숫자 레이블 - itemSpacing=10 (트랙과의 간격) */}
+            <div style={{ position: 'relative', marginTop: 10, height: 20 }}>
               {Array.from({ length: total }, (_, i) => {
                 const pos = ((i + 1) / total) * 100;
                 const isDone = i < completedTodos.length;
+                const isActive = i === completedTodos.length;
                 return (
                   <span key={i} style={{
                     position: 'absolute',
                     left: `${pos}%`,
                     transform: 'translateX(-50%)',
-                    fontSize: 13, fontWeight: isDone ? 700 : 600,
-                    color: isDone ? '#3182f6' : 'rgba(0,19,43,1)',
+                    fontSize: 13,
+                    fontWeight: isActive ? 700 : 600,
+                    color: isActive ? 'rgba(0,12,30,1.0)' : isDone ? '#3182f6' : 'rgba(0,19,43,1.0)',
                   }}>{i + 1}</span>
                 );
               })}
@@ -241,7 +286,7 @@ export default function TodoHome({ todos, onToggle, onDelete, onCreateTap }: Pro
                 todo={todo}
                 isCompleted={false}
                 onToggle={() => onToggle(todo.id, selectedDate)}
-                onDelete={onDelete}
+                onEdit={() => onEdit(todo)}
               />
             ))}
           </div>
@@ -263,15 +308,17 @@ export default function TodoHome({ todos, onToggle, onDelete, onCreateTap }: Pro
           </>
         )}
 
-        {/* 해낸 일 섹션 - 항상 펼침, 꺽쇠 없음 */}
+        {/* 해낸 일 섹션 - Listheader V3: paddingTop=16 paddingBottom=4 paddingLeft=24 paddingRight=24 */}
         {completedTodos.length > 0 && (
           <div>
             <div style={{
               display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-              padding: '0 24px 4px',
+              padding: '16px 24px 4px',
             }}>
-              <span style={{ fontSize: 20, fontWeight: 700, color: 'rgba(0,12,30,0.80)' }}>해낸 일</span>
-              <span style={{ fontSize: 13, fontWeight: 400, color: 'rgba(3,18,40,0.70)' }}>{completedTodos.length}개</span>
+              {/* title: fs=20 fw=700 color=rgba(0,12,30,1.0) full opacity */}
+              <span style={{ fontSize: 20, fontWeight: 700, color: 'rgba(0,12,30,1.0)' }}>해낸 일</span>
+              {/* Tailing Acc: fs=13 fw=400 color=rgba(3,18,40,1.0) */}
+              <span style={{ fontSize: 13, fontWeight: 400, color: 'rgba(3,18,40,1.0)' }}>{completedTodos.length}개</span>
             </div>
             <div style={{ padding: '0 24px' }}>
               {completedTodos.map(todo => (
@@ -280,7 +327,7 @@ export default function TodoHome({ todos, onToggle, onDelete, onCreateTap }: Pro
                   todo={todo}
                   isCompleted={true}
                   onToggle={() => onToggle(todo.id, selectedDate)}
-                  onDelete={onDelete}
+                  onEdit={() => onEdit(todo)}
                 />
               ))}
             </div>

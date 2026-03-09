@@ -1,20 +1,22 @@
 import { useState, useCallback, useEffect } from 'react';
 import TodoHome from './components/TodoHome';
 import TodoCreate from './components/TodoCreate';
+import TodoEdit from './components/TodoEdit';
 import TodoComplete from './components/TodoComplete';
 import type { CompletedTodoInfo } from './components/TodoComplete';
 import Toast from './components/Toast';
 import { useTodos } from './hooks/useTodos';
-import type { Recurrence } from './types/todo';
+import type { Todo, Recurrence } from './types/todo';
 import './App.css';
 
-type Screen = 'home' | 'create' | 'complete';
+type Screen = 'home' | 'create' | 'complete' | 'edit';
 
 export default function App() {
   const [screen, setScreen] = useState<Screen>('home');
   const [toast, setToast] = useState<{ message: string; type: 'default' | 'success' } | null>(null);
   const [completedTodo, setCompletedTodo] = useState<CompletedTodoInfo | null>(null);
-  const { todos, addTodo, toggleTodo, deleteTodo } = useTodos();
+  const [editingTodo, setEditingTodo] = useState<Todo | null>(null);
+  const { todos, addTodo, toggleTodo, updateTodo, deleteTodo } = useTodos();
 
   useEffect(() => {
     import('@apps-in-toss/web-bridge').then(({ setIosSwipeGestureEnabled }) => {
@@ -65,10 +67,29 @@ export default function App() {
     toggleTodo(id, date);
   }, [toggleTodo]);
 
-  const handleDelete = useCallback((id: string) => {
-    deleteTodo(id);
+  const handleEdit = useCallback((todo: Todo) => {
+    setEditingTodo(todo);
+    window.history.pushState({ screen: 'edit' }, '');
+    setScreen('edit');
+  }, []);
+
+  const handleUpdate = useCallback((
+    updates: Partial<Omit<Todo, 'id' | 'createdAt' | 'isCompleted' | 'completedAt' | 'completedDates'>>
+  ) => {
+    if (!editingTodo) return;
+    updateTodo(editingTodo.id, updates);
+    setEditingTodo(null);
+    setScreen('home');
+    setToast({ message: '수정됐어요', type: 'success' });
+  }, [editingTodo, updateTodo]);
+
+  const handleDeleteFromEdit = useCallback(() => {
+    if (!editingTodo) return;
+    deleteTodo(editingTodo.id);
+    setEditingTodo(null);
+    setScreen('home');
     setToast({ message: '삭제됐어요', type: 'default' });
-  }, [deleteTodo]);
+  }, [editingTodo, deleteTodo]);
 
   return (
     <>
@@ -76,7 +97,7 @@ export default function App() {
         <TodoHome
           todos={todos}
           onToggle={handleToggle}
-          onDelete={handleDelete}
+          onEdit={handleEdit}
           onCreateTap={goToCreate}
         />
       )}
@@ -91,6 +112,14 @@ export default function App() {
           todo={completedTodo}
           onHome={goToHome}
           onAddMore={goToCreate}
+        />
+      )}
+      {screen === 'edit' && editingTodo && (
+        <TodoEdit
+          todo={editingTodo}
+          onUpdate={handleUpdate}
+          onDelete={handleDeleteFromEdit}
+          onBack={() => setScreen('home')}
         />
       )}
       {toast && (

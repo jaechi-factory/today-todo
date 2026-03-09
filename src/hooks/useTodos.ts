@@ -124,6 +124,13 @@ export function useTodos() {
     );
   }, []);
 
+  const updateTodo = useCallback((
+    id: string,
+    updates: Partial<Omit<Todo, 'id' | 'createdAt' | 'isCompleted' | 'completedAt' | 'completedDates'>>
+  ) => {
+    setTodos(prev => prev.map(todo => todo.id === id ? { ...todo, ...updates } : todo));
+  }, []);
+
   const deleteTodo = useCallback((id: string) => {
     setTodos(prev => prev.filter(todo => todo.id !== id));
   }, []);
@@ -143,6 +150,7 @@ export function useTodos() {
     completedTodos,
     addTodo,
     toggleTodo,
+    updateTodo,
     deleteTodo,
   };
 }
