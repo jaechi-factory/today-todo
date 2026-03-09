@@ -183,12 +183,12 @@ export default function TodoHome({ todos, onToggle, onDelete, onCreateTap }: Pro
         {total > 0 && (
           <div style={{ padding: '8px 24px 12px', position: 'relative' }}>
             {/* 트랙 */}
-            <div style={{ position: 'relative', height: 4, borderRadius: 2, background: '#e5e8eb' }}>
+            <div style={{ position: 'relative', height: 8, borderRadius: 4, background: '#e5e8eb' }}>
               {/* 채워진 바 */}
               <div style={{
                 position: 'absolute', left: 0, top: 0, height: '100%',
                 width: `${(completedTodos.length / total) * 100}%`,
-                background: '#3182f6', borderRadius: 2,
+                background: '#3182f6', borderRadius: 4,
                 transition: 'width 0.3s ease',
               }} />
               {/* 스텝 점 */}
@@ -219,8 +219,8 @@ export default function TodoHome({ todos, onToggle, onDelete, onCreateTap }: Pro
                     position: 'absolute',
                     left: `${pos}%`,
                     transform: 'translateX(-50%)',
-                    fontSize: 11, fontWeight: isDone ? 600 : 400,
-                    color: isDone ? '#3182f6' : '#8b95a1',
+                    fontSize: 13, fontWeight: isDone ? 700 : 600,
+                    color: isDone ? '#3182f6' : 'rgba(0,19,43,1)',
                   }}>{i + 1}</span>
                 );
               })}

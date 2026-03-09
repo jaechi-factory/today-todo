@@ -78,7 +78,7 @@ export default function TodoItem({ todo, isCompleted, onToggle, onDelete }: Prop
         <div style={{ flex: 1, minWidth: 0 }}>
           <p style={{
             fontSize: 17, fontWeight: 600,
-            color: 'rgba(0, 12, 30, 0.80)',   /* #000c1e@0.80 */
+            color: 'rgba(0, 12, 30, 1)',
             margin: 0,
             whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
           }}>
@@ -88,7 +88,7 @@ export default function TodoItem({ todo, isCompleted, onToggle, onDelete }: Prop
             <p style={{
               fontSize: 15, fontWeight: 400,
               /* active: #2272eb, done: #00132b@0.58 */
-              color: isCompleted ? 'rgba(0, 19, 43, 0.58)' : '#2272eb',
+              color: isCompleted ? 'rgba(0, 19, 43, 1)' : '#2272eb',
               margin: '4px 0 0',
             }}>
               {timeLabel}
