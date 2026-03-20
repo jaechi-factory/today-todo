@@ -5,6 +5,7 @@ export default defineConfig({
   brand: {
     displayName: '오늘할일',
     primaryColor: '#3182f6',
+    icon: 'public/logo.png',
   },
   permissions: [],
   navigationBar: {
