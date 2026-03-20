@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { TossAds } from '@apps-in-toss/web-bridge';
 
 interface Props {
@@ -6,20 +6,8 @@ interface Props {
   variant?: 'card' | 'expanded';
 }
 
-function getTheme(): 'light' | 'dark' {
-  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-}
-
 export default function BannerAd({ adGroupId, variant = 'expanded' }: Props) {
   const ref = useRef<HTMLDivElement>(null);
-  const [theme, setTheme] = useState<'light' | 'dark'>(getTheme);
-
-  useEffect(() => {
-    const mq = window.matchMedia('(prefers-color-scheme: dark)');
-    const handler = (e: MediaQueryListEvent) => setTheme(e.matches ? 'dark' : 'light');
-    mq.addEventListener('change', handler);
-    return () => mq.removeEventListener('change', handler);
-  }, []);
 
   useEffect(() => {
     if (!ref.current) return;
@@ -30,9 +18,9 @@ export default function BannerAd({ adGroupId, variant = 'expanded' }: Props) {
     TossAds.initialize({
       callbacks: {
         onInitialized: () => {
-          if (!ref.current || !TossAds.attachBanner.isSupported()) return;
+          if (!ref.current) return;
           bannerResult = TossAds.attachBanner(adGroupId, ref.current, {
-            theme,
+            theme: 'auto',
             tone: 'grey',
             variant,
           });
@@ -41,10 +29,8 @@ export default function BannerAd({ adGroupId, variant = 'expanded' }: Props) {
       },
     });
 
-    return () => {
-      bannerResult?.destroy();
-    };
-  }, [adGroupId, variant, theme]);
+    return () => { bannerResult?.destroy(); };
+  }, [adGroupId, variant]);
 
   return <div ref={ref} style={{ width: '100%', minHeight: 96, flexShrink: 0 }} />;
 }
