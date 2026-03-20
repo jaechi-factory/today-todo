@@ -135,7 +135,6 @@ export default function TodoHome({ todos, onToggle, onEdit, onCreateTap }: Props
         </div>
         {/* CTA - 그라데이션 포함 */}
         <div>
-          <BannerAd adGroupId="ait.v2.live.9065cbbb39fb4636" variant="card" />
           <div style={{ height: 36, background: 'linear-gradient(to bottom, rgba(255,255,255,0), #ffffff)', pointerEvents: 'none' }} />
           <div style={{ background: '#ffffff', padding: '0 20px 20px' }}>
             <button
@@ -339,7 +338,9 @@ export default function TodoHome({ todos, onToggle, onEdit, onCreateTap }: Props
 
       {/* 고정 CTA - 그라데이션 + 버튼 */}
       <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0 }}>
-        <BannerAd adGroupId="ait.v2.live.0e51f46bf63e43eb" variant="expanded" />
+        <div style={{ paddingTop: 16 }}>
+          <BannerAd adGroupId="ait.v2.live.0e51f46bf63e43eb" variant="expanded" />
+        </div>
         {/* 상단 그라데이션 (36px) */}
         <div style={{
           height: 36,

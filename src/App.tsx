@@ -97,10 +97,15 @@ export default function App() {
   }, []);
 
   function goToCreate() {
-    showAd1ThenRun(() => {
+    if (todos.length === 0) {
       window.history.pushState({ screen: 'create' }, '');
       setScreen('create');
-    });
+    } else {
+      showAd1ThenRun(() => {
+        window.history.pushState({ screen: 'create' }, '');
+        setScreen('create');
+      });
+    }
   }
 
   function goToHome() {
