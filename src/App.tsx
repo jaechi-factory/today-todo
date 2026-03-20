@@ -19,7 +19,7 @@ export default function App() {
   const ad2Loaded = useRef(false);
 
   function preloadAd1() {
-    if (!loadFullScreenAd.isSupported()) return;
+    try { if (!loadFullScreenAd.isSupported()) return; } catch { return; }
     loadFullScreenAd({
       options: { adGroupId: 'ait.v2.live.5f49bd03ab6a45f0' },
       onEvent: (e) => { if (e.type === 'loaded') ad1Loaded.current = true; },
@@ -28,7 +28,7 @@ export default function App() {
   }
 
   function preloadAd2() {
-    if (!loadFullScreenAd.isSupported()) return;
+    try { if (!loadFullScreenAd.isSupported()) return; } catch { return; }
     loadFullScreenAd({
       options: { adGroupId: 'ait.v2.live.79831ac019c34997' },
       onEvent: (e) => { if (e.type === 'loaded') ad2Loaded.current = true; },
@@ -37,7 +37,9 @@ export default function App() {
   }
 
   function showAd1ThenRun(callback: () => void) {
-    if (ad1Loaded.current && showFullScreenAd.isSupported()) {
+    let sfSupported = false;
+    try { sfSupported = showFullScreenAd.isSupported(); } catch { sfSupported = false; }
+    if (ad1Loaded.current && sfSupported) {
       ad1Loaded.current = false;
       showFullScreenAd({
         options: { adGroupId: 'ait.v2.live.5f49bd03ab6a45f0' },
@@ -55,7 +57,9 @@ export default function App() {
   }
 
   function showAd2ThenRun(callback: () => void) {
-    if (ad2Loaded.current && showFullScreenAd.isSupported()) {
+    let sfSupported = false;
+    try { sfSupported = showFullScreenAd.isSupported(); } catch { sfSupported = false; }
+    if (ad2Loaded.current && sfSupported) {
       ad2Loaded.current = false;
       showFullScreenAd({
         options: { adGroupId: 'ait.v2.live.79831ac019c34997' },

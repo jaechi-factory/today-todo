@@ -11,7 +11,7 @@ export default function BannerAd({ adGroupId, variant = 'expanded' }: Props) {
 
   useEffect(() => {
     if (!ref.current) return;
-    if (!TossAds.initialize.isSupported()) return;
+    try { if (!TossAds.initialize.isSupported()) return; } catch { return; }
 
     let bannerResult: { destroy: () => void } | null = null;
 
