@@ -1,9 +1,12 @@
 import { useEffect, useRef } from 'react';
 import { TossAds } from '@apps-in-toss/web-bridge';
 
-const AD_GROUP_ID = 'ait-ad-test-banner-id';
+interface Props {
+  adGroupId: string;
+  variant?: 'card' | 'expanded';
+}
 
-export default function BannerAd() {
+export default function BannerAd({ adGroupId, variant = 'expanded' }: Props) {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -16,10 +19,10 @@ export default function BannerAd() {
       callbacks: {
         onInitialized: () => {
           if (!ref.current || !TossAds.attachBanner.isSupported()) return;
-          bannerResult = TossAds.attachBanner(AD_GROUP_ID, ref.current, {
+          bannerResult = TossAds.attachBanner(adGroupId, ref.current, {
             theme: 'auto',
             tone: 'blackAndWhite',
-            variant: 'expanded',
+            variant,
           });
         },
         onInitializationFailed: () => {},
@@ -29,7 +32,7 @@ export default function BannerAd() {
     return () => {
       bannerResult?.destroy();
     };
-  }, []);
+  }, [adGroupId, variant]);
 
   return <div ref={ref} style={{ width: '100%', minHeight: 96, flexShrink: 0 }} />;
 }
