@@ -11,8 +11,8 @@
     "build:ait": "ait build"
   },
   "dependencies": {
-    "@apps-in-toss/web-bridge": "^2.0.1",
-    "@apps-in-toss/web-framework": "^2.0.1",
+    "@apps-in-toss/web-bridge": "^2.0.5",
+    "@apps-in-toss/web-framework": "^2.0.5",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@toss/tds-mobile": "^2.2.1",
